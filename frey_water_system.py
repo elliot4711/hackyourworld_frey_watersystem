@@ -19,12 +19,12 @@ def get_humidity():
     print(humidity)
     return humidity
 
-def post_humidity(humidity, status, time):
-    r = requests.post('https://node-red-hyw-frej.eu-gb.mybluemix.net/humidity_endpoint', json={"humidity": humidity, "status": status, "time": time })
+def post_humidity(humidity, status):
+    r = requests.post('https://node-red-hyw-frej.eu-gb.mybluemix.net/humidity_endpoint', json={"humidity": humidity, "status": status})
     print("post status: " + str(r.status_code))
 
 def pump_control(humidity, weather_data):
-    time = datetime.datetime.now()   
+    #time = datetime.datetime.now()   
     precipation = 0  
     if humidity > 650:
         for y in range(4):
@@ -32,17 +32,17 @@ def pump_control(humidity, weather_data):
         
         if precipation > 2:
             print("It will rain soon, postponing watering")
-            post_humidity(humidity, "Dry", time)
+            post_humidity(humidity, "Dry")
         else:
             print("Watering commencing")
-            post_humidity(humidity, "Dry", time)
+            post_humidity(humidity, "Dry")
             board.digital[10].write(1)
             t.sleep(5)
             board.digital[10].write(0)
 
     else:
         print("No watering needed")
-        post_humidity(humidity, "Wet", time)
+        post_humidity(humidity, "Wet")
         board.digital[10].write(0)
 
 def get_weather():
